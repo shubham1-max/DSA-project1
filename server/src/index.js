@@ -1,6 +1,6 @@
 
 const express= require("express")
-require('dotenv').config();
+require("dotenv").config();
 const PORT=process.env.PORT;
 const URL= process.env.MONGO_URL;
 const connectDB= require("../src/lib/db");
