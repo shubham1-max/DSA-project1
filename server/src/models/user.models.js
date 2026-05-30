@@ -12,7 +12,7 @@ const user = new Schema({
     unique: true,
   },
 
-  passwordHash: {
+  password: {
     type: String,
     required: true,
   },
@@ -33,11 +33,6 @@ const user = new Schema({
 
   lastSolvedDate: {
     type: Date,
-  },
-
-  createdAt: {
-    type:Date,
-    default:Date.now
   },
 },{timestamps:true});
 
