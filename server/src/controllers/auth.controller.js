@@ -1,4 +1,4 @@
-const express = require("express");
+
 const User = require("../models/user.models");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
@@ -13,10 +13,9 @@ const register = async function (req, res) {
 
     const normalizedEmail = email.toLowerCase();
 
-    const existinguser = await User.findOne({
-     normalizedEmail,
-    });
-
+  const existinguser = await User.findOne({
+  email: normalizedEmail,
+});
     if (existinguser) {
       return res.status(400).json({ msg: "user already exist" });
     }
@@ -122,10 +121,13 @@ const getMe = async function (req, res) {
       });
     }
 
-  return res.status(200).json({
+return res.status(200).json({
   id: user._id,
   name: user.name,
   email: user.email,
+  streak: user.streak,
+  longestStreak: user.longestStreak,
+  totalSolved: user.totalSolved,
 });
 
   } catch (err) {

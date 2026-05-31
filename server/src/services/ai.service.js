@@ -10,11 +10,7 @@ const client = new GoogleGenAI({
 // Streams Gemini tokens to SSE response
 // Returns the parsed+validated aiResponse object
 
-const streamSolution = async (
-  question,
-  language = "JavaScript",
-  res
-) => {
+const streamSolution = async (question, language = "C++", res) => {
   // SSE headers
   res.setHeader("Content-Type", "text/event-stream");
   res.setHeader("Cache-Control", "no-cache");
@@ -42,7 +38,7 @@ const streamSolution = async (
       res.write(
         `data: ${JSON.stringify({
           token: text,
-        })}\n\n`
+        })}\n\n`,
       );
     }
 
@@ -50,15 +46,13 @@ const streamSolution = async (
     let parsed;
 
     try {
-      parsed = aiResponseSchema.parse(
-        JSON.parse(buffer)
-      );
+      parsed = aiResponseSchema.parse(JSON.parse(buffer));
     } catch (parseErr) {
       res.write(
         `data: ${JSON.stringify({
           error: "AI returned invalid response",
           retry: true,
-        })}\n\n`
+        })}\n\n`,
       );
 
       res.end();
@@ -70,23 +64,20 @@ const streamSolution = async (
       `data: ${JSON.stringify({
         done: true,
         data: parsed,
-      })}\n\n`
+      })}\n\n`,
     );
 
     res.end();
 
     return parsed;
   } catch (err) {
-    console.error(
-      "[aiService] Stream error:",
-      err.message
-    );
+    console.error("[aiService] Stream error:", err.message);
 
     res.write(
       `data: ${JSON.stringify({
         error: "Streaming failed. Please try again.",
         retry: true,
-      })}\n\n`
+      })}\n\n`,
     );
 
     res.end();

@@ -1,4 +1,3 @@
-
 const { Schema, model } = require("mongoose");
 const { nanoid } = require("nanoid");
 
@@ -6,7 +5,7 @@ const problemSchema = new Schema(
   {
     userId: {
       type: Schema.Types.ObjectId,
-      ref: "User",
+      ref: "user",
       required: true,
     },
 
@@ -16,6 +15,11 @@ const problemSchema = new Schema(
       trim: true,
     },
 
+    language: {
+      type: String,
+       enum: ["C++", "Java", "Python", "JavaScript", "C"],
+      default: "C++",
+    },
     aiResponse: {
       type: Schema.Types.Mixed,
       default: null,
@@ -41,7 +45,7 @@ const problemSchema = new Schema(
 
     shareId: {
       type: String,
-      default: () => nanoid(),
+      default: () => nanoid(8),
       unique: true,
     },
 
@@ -57,7 +61,7 @@ const problemSchema = new Schema(
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 // Index: { userId, createdAt }  for fast queries

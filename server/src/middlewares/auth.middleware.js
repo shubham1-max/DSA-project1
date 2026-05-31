@@ -38,4 +38,5 @@ const verifyToken= async function(req,res,next){
 
     }
 }
-module.exports= verifyToken;
+module.exports={ verifyToken
+};
