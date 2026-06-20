@@ -8,29 +8,24 @@ const register = async function (req, res) {
     const { name, email, password } = req.body;
 
     if (!name || !email || !password) {
-      return res.status(400).json({ error: "all fields required" });
+      return res.status(400).json({ message: "All fields are required" });
     }
 
     const normalizedEmail = email.toLowerCase();
 
-  const existinguser = await User.findOne({
-  email: normalizedEmail,
-});
+    const existinguser = await User.findOne({
+      email: normalizedEmail,
+    });
     if (existinguser) {
-      return res.status(400).json({ msg: "user already exist" });
+      return res.status(400).json({ message: "User already exists" });
     }
-
-    // const salt = randomBytes(256).toString("hex");
-    // const hashedpassword = createHmac("sha256", salt)
-    //   .update(password)
-    //   .digest("hex");
 
     const hashedpassword = await bcrypt.hash(password, 12);
 
     //create user and insert into database
     const user = await User.create({
       name,
-      email:normalizedEmail,
+      email: normalizedEmail,
       password: hashedpassword,
     });
 
@@ -46,7 +41,7 @@ const register = async function (req, res) {
     });
 
     return res.status(201).json({
-      msg: "User created",
+      message: "User created successfully",
       user: {
         id: user._id,
         name: user.name,
@@ -54,10 +49,9 @@ const register = async function (req, res) {
       },
       token,
     });
-
   } catch (err) {
-      console.error(err);
-    return res.status(500).json({ msg: "server error" });
+    console.error(err);
+    return res.status(500).json({ message: "Server error" });
   }
 };
 
@@ -67,15 +61,15 @@ const login = async function (req, res) {
 
     if (!email || !password) {
       return res.status(400).json({
-        error: "Email and Password are required",
+        message: "Email and password are required",
       });
     }
 
-    const user = await User.findOne({  email: email.toLowerCase(), });
+    const user = await User.findOne({ email: email.toLowerCase() });
 
     if (!user) {
       return res.status(400).json({
-        msg: "Please register first",
+        message: "Please register first",
       });
     }
 
@@ -83,7 +77,7 @@ const login = async function (req, res) {
 
     if (!isMatch) {
       return res.status(400).json({
-        msg: "Invalid credentials",
+        message: "Invalid credentials",
       });
     }
 
@@ -98,52 +92,47 @@ const login = async function (req, res) {
     });
 
     return res.status(200).json({
-      msg: "Login successful",
+      message: "Login successful",
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+      },
       token,
     });
   } catch (err) {
+    console.error(err);
     return res.status(500).json({
-      msg: "Server Error",
+      message: "Server error",
     });
   }
 };
-
 
 const getMe = async function (req, res) {
   try {
-
-    const user = await User.findById(req.user.id)
-      .select("-password");
+    const user = await User.findById(req.user.id).select("-password");
 
     if (!user) {
       return res.status(404).json({
-        error: "User not found"
+        message: "User not found",
       });
     }
 
-return res.status(200).json({
-  id: user._id,
-  name: user.name,
-  email: user.email,
-  streak: user.streak,
-  longestStreak: user.longestStreak,
-  totalSolved: user.totalSolved,
-});
-
-  } catch (err) {
-
-    console.log(err);
-
-
-    return res.status(500).json({
-
-      error: "Server Error"
+    return res.status(200).json({
+      id: user._id,
+      name: user.name,
+      email: user.email,
+      streak: user.streak,
+      longestStreak: user.longestStreak,
+      totalSolved: user.totalSolved,
     });
-
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({
+      message: "Server error",
+    });
   }
 };
-
-
 
 module.exports = {
   register,
