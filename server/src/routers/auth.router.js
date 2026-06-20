@@ -6,10 +6,11 @@ const {verifyToken}=require("../middlewares/auth.middleware")
 const{register,login,getMe}=require("../controllers/auth.controller");
 const {authLimiter}=require("../middlewares/rateLimit.middleware");
 
-router.post('/register',authLimiter,register);
+// Public routes with rate limiting
+router.post('/signup', authLimiter, register);
+router.post('/login', authLimiter, login);
 
-router.post('/login',authLimiter,login);
-
-router.get('/me',verifyToken,getMe);
+// Protected routes
+router.get('/me', verifyToken, getMe);
 
 module.exports=router;
